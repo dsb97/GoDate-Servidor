@@ -22,7 +22,7 @@ class UsuarioSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 100; $i++) {
 
             //Creamos el usuario
             Usuario::factory()->create();

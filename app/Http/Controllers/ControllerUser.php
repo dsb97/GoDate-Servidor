@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Compatibilidad;
 use App\Models\Genero;
+use App\Models\Like;
 use App\Models\Usuario;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,9 @@ class ControllerUser extends Controller
     public function listarAfinidades($idUsuario) {
         $uC = Usuario::with(['likesDados', 'dislikesDados','compatibilidadOrigen', 'compatibilidadDestino', 'preferencias', 'gustosGenero'])->find($idUsuario);
 
+        //Falta filtrar por edad :>
         $lista = Usuario::with('preferencias')
+                    ->where('id', '<>', $idUsuario)
                     ->whereIn('id_genero', $uC->gustosGenero->pluck('id_genero')->toArray())
                     ->whereNotIn('id', $uC->likesDados->pluck('id_usuario_d')->toArray())
                     ->whereNotIn('id', $uC->dislikesDados->pluck('id_usuario_d')->toArray())
@@ -88,7 +91,11 @@ class ControllerUser extends Controller
 
     }
 
-    public function like() {
+    public function like($id_u_o, $id_u_d) {
+        Like::create([
+            'id_usuario_o' => $id_u_o,
+            'id_usuario_d' => $id_u_d
+        ]);
 
     }
 
