@@ -18,7 +18,6 @@ class CreateUsuarios extends Migration
             $table->string('nombre');
             $table->string('apellidos');
             $table->string('correo')->unique( );
-            $table->string('pass');
             $table->unsignedBigInteger('id_genero');
             $table->foreign('id_genero')->references('id')->on('generos')->onDelete('cascade');
             $table->date('fecha_nacimiento');

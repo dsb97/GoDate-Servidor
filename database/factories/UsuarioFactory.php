@@ -10,6 +10,9 @@ class UsuarioFactory extends Factory
 
     protected $model = Usuario::class;
 
+    public static $idUsuario;
+
+
     /**
      * Define the model's default state.
      *
@@ -21,7 +24,6 @@ class UsuarioFactory extends Factory
             'nombre' => $this->faker->firstName,
             'apellidos' => $this->faker->lastName,
             'correo' =>preg_replace('/@example\..*/', '@mail.com', $this->faker->unique()->safeEmail),
-            'pass' => md5('12345'),
             'id_genero' => rand(1,3),
             'fecha_nacimiento' => $this->faker->date,
             'ciudad' => $this->faker->city,

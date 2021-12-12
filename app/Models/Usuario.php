@@ -16,7 +16,7 @@ class Usuario extends Model
     }
 
     public function preferencias() {
-        return $this->hasMany(PreferenciaUsuario::class, 'id_usuario', 'id');
+        return $this->hasMany(PrefUsuarios::class, 'id_usuario', 'id');
     }
 
     public function likesDados(){
@@ -42,7 +42,5 @@ class Usuario extends Model
     public function compatibilidadDestino() {
         return $this->hasMany(Compatibilidad::class, 'id_usuario_d', 'id');
     }
-
-
 
 }
