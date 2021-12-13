@@ -21,15 +21,26 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix'=>'user'], function() {
     Route::get('listarAfinidades/{idUsuario}', [ControllerUser::class, 'listarAfinidades']);
     Route::get('perfilUsuario/{idUsuario}', [ControllerUser::class, 'perfilUsuario']);
-    Route::post('like/{id}', [ControllerUser::class, 'like']);
-    Route::post('dislike/{id}', [ControllerUser::class, 'dislike']);
+    Route::any('like', [ControllerUser::class, 'like']);
+    Route::post('dislike', [ControllerUser::class, 'dislike']);
     Route::delete('borrarPerfil/{id}', [ControllerUser::class, 'borrarPerfil']);
+    Route::get('listarAmigos/{idUsuario}', [ControllerUser::class, 'listarAmigos']);
+    Route::get('listarGenteCerca/{idUsuario}', [ControllerUser::class, 'listarGenteCerca']);
+    Route::get('listarLesGusto/{idUsuario}', [ControllerUser::class, 'listarLesGusto']);
 });
 
-//Posible modificación
 Route::get('iniciarSesion', [Controller::class, 'iniciarSesion']);
 
 //get: listar
 //post: registrar
 //put: modificar
 //delete:borrar
+
+/**
+ * url
+ * let headers = new HttpHeaders({
+ *  'Content-Type' : 'application/json'
+ * });
+ *
+ * return this.http.post(url, [email1, email2], {headers: headers})
+ */

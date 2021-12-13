@@ -11,6 +11,10 @@ class Usuario extends Model
 
     //protected $fillable = ['nombre', 'apellidos', 'correo', 'pass', 'id_genero', 'fecha_nacimiento', 'ciudad', 'descripcion', 'foto', 'conectado', 'activo', 'tema'];
 
+    public function pass () {
+        return $this->hasOne(Pass::class, 'id_usuario', 'id');
+    }
+
     public function gustosGenero() {
         return $this->hasMany(GustosGenero::class, 'id_usuario', 'id');
     }
