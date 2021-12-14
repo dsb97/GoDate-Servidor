@@ -1,9 +1,9 @@
 <?php
 
+use App\Http\Controllers\ControllerAdmin;
 use App\Http\Controllers\ControllerUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
@@ -28,14 +27,18 @@ Route::group(['prefix'=>'user'], function() {
     Route::get('listarGenteCerca/{idUsuario}', [ControllerUser::class, 'listarGenteCerca']);
     Route::get('listarLesGusto/{idUsuario}', [ControllerUser::class, 'listarLesGusto']);
 });
+Route::get('iniciarSesion', [ControllerGeneric::class, 'iniciarSesion']);
 
-Route::get('iniciarSesion', [Controller::class, 'iniciarSesion']);
-
+Route::group(['prefix' => 'admin'], function (){
+    Route::get('listarUsuarios', [ControllerAdmin::class]);
+    Route::post('altaUsuario', [ControllerAdmin::class]);
+    Route::put('togleActivado', [ControllerAdmin::class]);
+    Route::delete('borrarUsuario', [ControllerAdmin::class]);
+});
 //get: listar
 //post: registrar
 //put: modificar
 //delete:borrar
-
 /**
  * url
  * let headers = new HttpHeaders({
