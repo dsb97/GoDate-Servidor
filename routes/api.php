@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-Route::group(['prefix'=>'user'], function() {
+Route::group(['prefix' => 'user'], function () {
     Route::get('listarAfinidades/{idUsuario}', [ControllerUser::class, 'listarAfinidades']);
     Route::get('perfilUsuario/{idUsuario}', [ControllerUser::class, 'perfilUsuario']);
-    Route::any('like', [ControllerUser::class, 'like']);
+    Route::post('like', [ControllerUser::class, 'like']);
     Route::post('dislike', [ControllerUser::class, 'dislike']);
     Route::delete('borrarPerfil/{id}', [ControllerUser::class, 'borrarPerfil']);
     Route::get('listarAmigos/{idUsuario}', [ControllerUser::class, 'listarAmigos']);
@@ -29,11 +29,11 @@ Route::group(['prefix'=>'user'], function() {
 });
 Route::get('iniciarSesion', [ControllerGeneric::class, 'iniciarSesion']);
 
-Route::group(['prefix' => 'admin'], function (){
-    Route::get('listarUsuarios', [ControllerAdmin::class]);
-    Route::post('altaUsuario', [ControllerAdmin::class]);
-    Route::put('togleActivado', [ControllerAdmin::class]);
-    Route::delete('borrarUsuario', [ControllerAdmin::class]);
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('listarUsuarios', [ControllerAdmin::class, 'listarUsuarios']);
+    Route::post('altaUsuario', [ControllerAdmin::class, 'altaUsuario']);
+    Route::put('togleActivado', [ControllerAdmin::class, 'togleActivado']);
+    Route::delete('borrarUsuario', [ControllerAdmin::class, 'borrarUsuario']);
 });
 //get: listar
 //post: registrar
