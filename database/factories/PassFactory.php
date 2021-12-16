@@ -20,7 +20,7 @@ class PassFactory extends Factory
     {
         return [
             'id_usuario' => self::$idUsuario,
-            'pass' => md5('12345')
+            'pass' => md5('Asd12345')
         ];
     }
 }
