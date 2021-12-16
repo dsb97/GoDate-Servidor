@@ -27,6 +27,7 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('listarGenteCerca/{idUsuario}', [ControllerUser::class, 'listarGenteCerca']);
     Route::get('listarLesGusto/{idUsuario}', [ControllerUser::class, 'listarLesGusto']);
 });
+
 Route::get('iniciarSesion', [ControllerGeneric::class, 'iniciarSesion']);
 
 Route::group(['prefix' => 'admin'], function () {
@@ -35,15 +36,3 @@ Route::group(['prefix' => 'admin'], function () {
     Route::put('togleActivado', [ControllerAdmin::class, 'togleActivado']);
     Route::delete('borrarUsuario', [ControllerAdmin::class, 'borrarUsuario']);
 });
-//get: listar
-//post: registrar
-//put: modificar
-//delete:borrar
-/**
- * url
- * let headers = new HttpHeaders({
- *  'Content-Type' : 'application/json'
- * });
- *
- * return this.http.post(url, [email1, email2], {headers: headers})
- */

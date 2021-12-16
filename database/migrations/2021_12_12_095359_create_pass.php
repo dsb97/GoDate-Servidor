@@ -15,7 +15,7 @@ class CreatePass extends Migration
     {
         Schema::create('pass', function (Blueprint $table) {
             $table->unsignedBigInteger('id_usuario')->primary();
-            $table->foreign('id_usuario')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('id_usuario')->references('id')->on('usuarios')->onDelete('cascade')->onUpdate('cascade');
             $table->string('pass');
             $table->timestamps();
         });

@@ -16,9 +16,9 @@ class CreateCompatibilidad extends Migration
         Schema::create('compatibilidad', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_usuario_o');
-            $table->foreign('id_usuario_o')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('id_usuario_o')->references('id')->on('usuarios')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('id_usuario_d');
-            $table->foreign('id_usuario_d')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('id_usuario_d')->references('id')->on('usuarios')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('porcentaje');
             $table->timestamps();
         });

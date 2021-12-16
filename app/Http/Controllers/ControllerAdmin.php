@@ -39,9 +39,8 @@ class ControllerAdmin extends Controller
             return response()->json(['error' => 'No se encuentra el usuario'], 404);
         }
         $usuario->delete();
-        return response()->json(['mensaje' => 'OK'], 204);
+        return response()->json(['mensaje' => 'OK'], 200);
     }
-
     public function togleActivado (Request $r){
         $usuario = Usuario::find($r);
         if(!$usuario) {
@@ -49,6 +48,6 @@ class ControllerAdmin extends Controller
         }
         $usuario->activo = ($usuario->activo == 1 ? 0 : 1);
         $usuario->save();
-        return response()->json(['mensaje' => 'OK'], 204);
+        return response()->json(['mensaje' => 'OK'], 200);
     }
 }
