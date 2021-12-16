@@ -16,9 +16,9 @@ class CreateGustosGenero extends Migration
         Schema::create('gustos_genero', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('id_usuario');
-            $table->foreign('id_usuario')->references('id')->on('usuarios')->onDelete('cascade');
+            $table->foreign('id_usuario')->references('id')->on('usuarios')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedBigInteger('id_genero');
-            $table->foreign('id_genero')->references('id')->on('generos')->onDelete('cascade');
+            $table->foreign('id_genero')->references('id')->on('generos')->onDelete('cascade')->onUpdate('cascade');
             $table->timestamps();
         });
     }

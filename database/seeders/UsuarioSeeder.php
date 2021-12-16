@@ -40,6 +40,18 @@ class UsuarioSeeder extends Seeder
                     || str_contains($preferencias[$j]->descripcion, 'Hijo')
                 ) {
                     $intensidad = rand(0, 1) * 100;
+                } else if (str_contains($preferencias[$j]->descripcion, 'Edad')) {
+                    //Edad maxima
+                    $val1 = rand(18,100);
+                    $val2 = rand(18,100);
+                    $max = ($val1 > $val2 ? $val1 : $val2);
+                    $min = ($val1 < $val2 ? $val1 : $val2);
+                    if(str_contains($preferencias[$j]->descripcion, 'min')){
+                        $intensidad = $min;
+                    } else {
+                        $intensidad = $max;
+                    }
+
                 } else {
                     $intensidad = rand(0, 100);
                 }

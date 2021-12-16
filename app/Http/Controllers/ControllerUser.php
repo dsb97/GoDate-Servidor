@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 
 class ControllerUser extends Controller
 {
+
     /**
      * Devuelve una lista de gente afín al usuario introducido
      * @param integer $idUsuario
@@ -19,10 +20,20 @@ class ControllerUser extends Controller
     public function listarAfinidades($idUsuario)
     {
         $uC = Usuario::with(['likesDados', 'dislikesDados', 'compatibilidadOrigen', 'compatibilidadDestino', 'preferencias', 'gustosGenero'])->find($idUsuario);
+        $idPreferenciaEdadMax = Preferencia::where('descripcion', 'like', '%dad%n%')->get('id')->pluck('id')->toArray()[0];
+        $idPreferenciaEdadMin = Preferencia::where('descripcion', 'like', '%dad%x%')->get('id')->pluck('id')->toArray()[0];
 
-        //Falta filtrar por edad :<
+        //Añadido filtro por edad
+        $edadMin = $this->getAnio($uC->preferencias->where('id_preferencia', $idPreferenciaEdadMin)->first()->intensidad);
+        $edadMax = $this->getAnio($uC->preferencias->where('id_preferencia', $idPreferenciaEdadMax)->first()->intensidad);
+
+        //dd($edadMax . ',' . $edadMin);
         $lista = Usuario::with('preferencias')
-            ->where('id', '<>', $idUsuario)
+            ->where([
+                ['id', '<>', $idUsuario],
+                ['fecha_nacimiento', '>', $edadMin],
+                ['fecha_nacimiento', '<', $edadMax]
+            ])
             ->whereIn('id_genero', $uC->gustosGenero->pluck('id_genero')->toArray())
             ->whereNotIn('id', $uC->likesDados->pluck('id_usuario_d')->toArray())
             ->whereNotIn('id', $uC->dislikesDados->pluck('id_usuario_d')->toArray())
@@ -30,10 +41,12 @@ class ControllerUser extends Controller
             ->take(100)
             ->get();
 
-        if (
-            count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
-            || (count($uC->compatibilidadOrigen) != count($lista))
-        ) {
+
+
+
+
+        if (count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
+            || (count($uC->compatibilidadOrigen) != count($lista))) {
             $this->generarCompatibilidad($lista, Usuario::with('preferencias')->find($idUsuario));
         }
 
@@ -54,6 +67,14 @@ class ControllerUser extends Controller
     }
 
     /**
+     * Obtiene una fecha formateada según la edad introducida
+     * para compararla con las edades mínimas y máximas que el usuario
+     * indique en sus preferencias
+     */
+    private function getAnio($y) {
+        return date("Y") - intval($y.'') . '-01-01';
+    }
+    /**
      * Genera un porcentaje de compatibilidad para cada uno de los usuarios de la lista dada
      * @param mixed $lista
      * @param mixed $yo
@@ -65,7 +86,8 @@ class ControllerUser extends Controller
             $suma = 0;
             $countPrefVal = 0;
             foreach ($usuario->preferencias as $preferencia) {
-                if (!str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'edad')) {
+                if (!str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'edad')
+                || !str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'relac')) {
                     $maximo = max($preferencia->intensidad, $yo->preferencias->where('id_preferencia', $preferencia->id_preferencia)->first()->intensidad);
                     $minimo = min($preferencia->intensidad, $yo->preferencias->where('id_preferencia', $preferencia->id_preferencia)->first()->intensidad);
                     $suma += $this->calcularPorcentajeCompatibilidad($maximo, $minimo);
@@ -101,7 +123,7 @@ class ControllerUser extends Controller
 
     /**
      * Calcula un porcentaje entre dos valores
-     * @param integer $maximo Valor del +límite superior del cálculo
+     * @param integer $maximo Valor del límite superior del cálculo
      * @param integer $minimo Valor del límite inferior del cálculo
      */
     private function calcularPorcentajeCompatibilidad($maximo, $minimo)
@@ -146,7 +168,7 @@ class ControllerUser extends Controller
             ]);
         }
 
-        return response()->json(['mensaje' => $this->esMatch($id_usuario_origen, $id_usuario_destino) ? 'true' : 'false'], 200);
+        return response()->json($this->esMatch($id_usuario_origen, $id_usuario_destino) ? 'true' : 'false', 200);
     }
 
     /**
@@ -187,8 +209,15 @@ class ControllerUser extends Controller
         return response()->json(['mensaje' => 'ok'], 200);
     }
 
-    public function borrarPerfil()
+    public function borrarPerfil($idUsuario)
     {
+    }
+
+    public function cerrarSesion ($idUsuario) {
+        $u = Usuario::find($idUsuario);
+        $u->conectado = 0;
+        $u->save();
+        return response()->json(200);
     }
 
     /**
