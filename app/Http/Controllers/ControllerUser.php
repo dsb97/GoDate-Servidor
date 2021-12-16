@@ -43,6 +43,8 @@ class ControllerUser extends Controller
 
 
 
+
+
         if (count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
             || (count($uC->compatibilidadOrigen) != count($lista))) {
             $this->generarCompatibilidad($lista, Usuario::with('preferencias')->find($idUsuario));
@@ -209,6 +211,13 @@ class ControllerUser extends Controller
 
     public function borrarPerfil($idUsuario)
     {
+    }
+
+    public function cerrarSesion ($idUsuario) {
+        $u = Usuario::find($idUsuario);
+        $u->conectado = 0;
+        $u->save();
+        return response()->json(200);
     }
 
     /**

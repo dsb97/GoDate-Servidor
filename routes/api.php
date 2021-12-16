@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ControllerAdmin;
 use App\Http\Controllers\ControllerUser;
+use App\Http\Controllers\ControllerGeneric;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 /*
@@ -26,9 +27,10 @@ Route::group(['prefix' => 'user'], function () {
     Route::get('listarAmigos/{idUsuario}', [ControllerUser::class, 'listarAmigos']);
     Route::get('listarGenteCerca/{idUsuario}', [ControllerUser::class, 'listarGenteCerca']);
     Route::get('listarLesGusto/{idUsuario}', [ControllerUser::class, 'listarLesGusto']);
+    Route::get('cerrarSesion/{idUsuario}', [ControllerUser::class, 'cerrarSesion']);
 });
 
-Route::get('iniciarSesion', [ControllerGeneric::class, 'iniciarSesion']);
+Route::any('login', [ControllerGeneric::class, 'login']);
 
 Route::group(['prefix' => 'admin'], function () {
     Route::get('listarUsuarios', [ControllerAdmin::class, 'listarUsuarios']);
