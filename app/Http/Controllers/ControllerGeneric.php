@@ -10,6 +10,10 @@ use Illuminate\Http\Request;
 
 class ControllerGeneric extends Controller
 {
+    /**
+     * Función que comprueba la existencia de un usuario según el correo y la contraseña
+     * asignada por parámetros en la petición
+     */
     public function login(Request $r) {
         $correo = $r->get('correo');
         $pass = $r->get('pass');
@@ -30,10 +34,16 @@ class ControllerGeneric extends Controller
 
     }
 
+    /**
+     * Obtiene las ciudades para el select del formulario de registro
+     */
     public function obtenerCiudadesFormulario () {
         return response()->json(Ciudad::get('ciudad'), 200);
     }
 
+    /**
+     * Obtiene las preferencias para el select del formulario de registro
+     */
     public function obtenerPreferenciasFormulario () {
         return response()->json(Preferencia::get(['id', 'descripcion']), 200);
     }

@@ -209,10 +209,18 @@ class ControllerUser extends Controller
         return response()->json(['mensaje' => 'ok'], 200);
     }
 
+    /**
+     * Borra el perfil de un usuario en concreto
+     * @param integer $idUsuario
+     */
     public function borrarPerfil($idUsuario)
     {
     }
 
+    /**
+     * Cierra la sesión de un usuario en concreto
+     * @param integer $idUsuario
+     */
     public function cerrarSesion ($idUsuario) {
         $u = Usuario::find($idUsuario);
         $u->conectado = 0;
@@ -222,6 +230,7 @@ class ControllerUser extends Controller
 
     /**
      * Lista las personas con un like mutuo
+     * @param integer $idUsuario
      */
     public function listarAmigos($idUsuario)
     {
@@ -251,6 +260,8 @@ class ControllerUser extends Controller
 
     /**
      * Lista las personas de la misma ciudad que el usuario
+     * @param integer $idUsuario
+     *
      */
     public function listarGenteCerca($idUsuario)
     {
@@ -266,6 +277,8 @@ class ControllerUser extends Controller
 
     /**
      * Lista las personas que han dado like al perfil del usuario
+     * @param integer $idUsuario
+     *
      */
     public function listarLesGusto($idUsuario)
     {
