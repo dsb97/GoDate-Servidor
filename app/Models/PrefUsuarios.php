@@ -10,4 +10,9 @@ class PrefUsuarios extends Model
     use HasFactory;
 
     protected $table = 'preferencias_usuarios';
+    protected $fillable = [
+        'id_usuario',
+        'id_preferencia',
+        'intensidad'
+    ];
 }

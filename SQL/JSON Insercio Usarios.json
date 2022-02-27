@@ -1,0 +1,303 @@
+{
+    "nombre": "David",
+    "apellidos": "Sánchez Barragán",
+    "correo": "david@mail.com",
+    "pass": "Sup3rm4n",
+    "id_genero": 1,
+    "fecha_nacimiento": "1997-11-21",
+    "ciudad": "Puertollano",
+    "descripcion": "Me gustan los trenes y jugar al Mario Kart",
+    "foto": "https://picsum.photos/350",
+    "hijos": "0",
+    "gustosGenero": [
+        1
+    ],
+    "preferencias": [
+        {
+            "id": 1,
+            "descripcion": "Relación",
+            "intensidad": 100
+        },
+        {
+            "id": 2,
+            "descripcion": "Deportes",
+            "intensidad": 50
+        },
+        {
+            "id": 3,
+            "descripcion": "Arte",
+            "intensidad": 50
+        },
+        {
+            "id": 4,
+            "descripcion": "Cultura",
+            "intensidad": 50
+        },
+        {
+            "id": 5,
+            "descripcion": "Política",
+            "intensidad": 100
+        },
+        {
+            "id": 6,
+            "descripcion": "¿Quiero hijos?",
+            "intensidad": 0
+        },
+        {
+            "id": 7,
+            "descripcion": "Edad mínima",
+            "intensidad": 18
+        },
+        {
+            "id": 8,
+            "descripcion": "Edad máxima",
+            "intensidad": 30
+        }
+    ]
+}
+
+
+
+
+
+
+{
+    "nombre": "Álvaro",
+    "apellidos": "Santos Martín-Nieto",
+    "correo": "alvaro@mail.com",
+    "pass": "Sup3rm4n",
+    "id_genero": 1,
+    "fecha_nacimiento": "1999-06-04",
+    "ciudad": "Fuente el Fresno",
+    "descripcion": "La vida pirata la vida mejor, con la botella de ron",
+    "foto": "https://picsum.photos/350",
+    "hijos": "0",
+    "gustosGenero": [
+        2
+    ],
+    "preferencias": [
+        {
+            "id": 1,
+            "descripcion": "Relación",
+            "intensidad": 0
+        },
+        {
+            "id": 2,
+            "descripcion": "Deportes",
+            "intensidad": 100
+        },
+        {
+            "id": 3,
+            "descripcion": "Arte",
+            "intensidad": 50
+        },
+        {
+            "id": 4,
+            "descripcion": "Cultura",
+            "intensidad": 50
+        },
+        {
+            "id": 5,
+            "descripcion": "Política",
+            "intensidad": 0
+        },
+        {
+            "id": 6,
+            "descripcion": "¿Quiero hijos?",
+            "intensidad": 100
+        },
+        {
+            "id": 7,
+            "descripcion": "Edad mínima",
+            "intensidad": 18
+        },
+        {
+            "id": 8,
+            "descripcion": "Edad máxima",
+            "intensidad": 30
+        }
+    ]
+}
+
+
+
+
+{
+    "nombre": "Daniel",
+    "apellidos": "Jiménez Coello",
+    "correo": "daniel@mail.com",
+    "pass": "Sup3rm4n",
+    "id_genero": 1,
+    "fecha_nacimiento": "1992-09-15",
+    "ciudad": "Puertollano",
+    "descripcion": "La ciencia hay que hacerla, no se hace sola",
+    "foto": "https://picsum.photos/350",
+    "hijos": "0",
+    "gustosGenero": [
+        1,
+        2,
+        3
+    ],
+    "preferencias": [
+        {
+            "id": 1,
+            "descripcion": "Relación",
+            "intensidad": 0
+        },
+        {
+            "id": 2,
+            "descripcion": "Deportes",
+            "intensidad": 0
+        },
+        {
+            "id": 3,
+            "descripcion": "Arte",
+            "intensidad": 100
+        },
+        {
+            "id": 4,
+            "descripcion": "Cultura",
+            "intensidad": 100
+        },
+        {
+            "id": 5,
+            "descripcion": "Política",
+            "intensidad": 100
+        },
+        {
+            "id": 6,
+            "descripcion": "¿Quiero hijos?",
+            "intensidad": 100
+        },
+        {
+            "id": 7,
+            "descripcion": "Edad mínima",
+            "intensidad": 18
+        },
+        {
+            "id": 8,
+            "descripcion": "Edad máxima",
+            "intensidad": 30
+        }
+    ]
+}
+
+
+{
+    "nombre": "Malena",
+    "apellidos": "Diéz Viñas",
+    "correo": "malena@mail.com",
+    "pass": "Sup3rm4n",
+    "id_genero": 2,
+    "fecha_nacimiento": "2000-03-29",
+    "ciudad": "Almodóvar del Campo",
+    "descripcion": "Asesina de abejas con las rodillas",
+    "foto": "https://picsum.photos/350",
+    "hijos": "0",
+    "gustosGenero": [
+        2
+    ],
+    "preferencias": [
+        {
+            "id": 1,
+            "descripcion": "Relación",
+            "intensidad": 0
+        },
+        {
+            "id": 2,
+            "descripcion": "Deportes",
+            "intensidad": 50
+        },
+        {
+            "id": 3,
+            "descripcion": "Arte",
+            "intensidad": 50
+        },
+        {
+            "id": 4,
+            "descripcion": "Cultura",
+            "intensidad": 100
+        },
+        {
+            "id": 5,
+            "descripcion": "Política",
+            "intensidad": 100
+        },
+        {
+            "id": 6,
+            "descripcion": "¿Quiero hijos?",
+            "intensidad": 0
+        },
+        {
+            "id": 7,
+            "descripcion": "Edad mínima",
+            "intensidad": 18
+        },
+        {
+            "id": 8,
+            "descripcion": "Edad máxima",
+            "intensidad": 30
+        }
+    ]
+}
+
+
+
+
+{
+    "nombre": "Laura",
+    "apellidos": "Moreno Ramos",
+    "correo": "laura@mail.com",
+    "pass": "Sup3rm4n",
+    "id_genero": 2,
+    "fecha_nacimiento": "1997-05-24",
+    "ciudad": "Puertollano",
+    "descripcion": "¿Te comerías un turrón de Suchard por 200.000€?",
+    "foto": "https://picsum.photos/350",
+    "hijos": "0",
+    "gustosGenero": [
+        1
+    ],
+    "preferencias": [
+        {
+            "id": 1,
+            "descripcion": "Relación",
+            "intensidad": 0
+        },
+        {
+            "id": 2,
+            "descripcion": "Deportes",
+            "intensidad": 50
+        },
+        {
+            "id": 3,
+            "descripcion": "Arte",
+            "intensidad": 100
+        },
+        {
+            "id": 4,
+            "descripcion": "Cultura",
+            "intensidad": 50
+        },
+        {
+            "id": 5,
+            "descripcion": "Política",
+            "intensidad": 0
+        },
+        {
+            "id": 6,
+            "descripcion": "¿Quiero hijos?",
+            "intensidad": 0
+        },
+        {
+            "id": 7,
+            "descripcion": "Edad mínima",
+            "intensidad": 18
+        },
+        {
+            "id": 8,
+            "descripcion": "Edad máxima",
+            "intensidad": 30
+        }
+    ]
+}

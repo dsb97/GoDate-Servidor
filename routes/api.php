@@ -33,8 +33,11 @@ Route::group(['prefix' => 'user'], function () {
 Route::any('login', [ControllerGeneric::class, 'login']);
 
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('listarUsuarios', [ControllerAdmin::class, 'listarUsuarios']);
     Route::post('altaUsuario', [ControllerAdmin::class, 'altaUsuario']);
+    Route::get('listarUsuarios', [ControllerAdmin::class, 'listarUsuarios']);
+    Route::get('detalleUsuario/{id}', [ControllerAdmin::class, 'detalleUsuario']);
+    Route::post('actualizarUsuario', [ControllerAdmin::class, 'actualizarUsuario']);
+    Route::delete('borrarUsuario/{id}', [ControllerAdmin::class, 'borrarUsuario']);
+
     Route::put('togleActivado', [ControllerAdmin::class, 'togleActivado']);
-    Route::delete('borrarUsuario', [ControllerAdmin::class, 'borrarUsuario']);
 });
