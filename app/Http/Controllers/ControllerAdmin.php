@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\GustosGenero;
 use App\Models\Pass;
 use App\Models\PrefUsuarios;
+use App\Models\Rol;
+use App\Models\RolUsuario;
 use App\Models\Usuario;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,7 +38,7 @@ class ControllerAdmin extends Controller
                 'foto' => 'https://picsum.photos/350',
                 'hijos' => $r->get('hijos'),
                 'conectado' => 0,
-                'activo' => 0,
+                'activo' => $r->get('activo'),
                 'tema' => 0,
             ]);
 
@@ -65,16 +67,25 @@ class ControllerAdmin extends Controller
                 ]);
             }
 
-            return response()->json(['mensaje' => 'Usuario registrado correctamente'], 200);
+            //Insertamos los roles
+            //Cambio 01-03-2022
+            foreach ($r->roles as $rol) {
+                RolUsuario::create([
+                    'id_usuario' => $id,
+                    'id_rol' => $rol
+                ]);
+            }
 
+
+            return response()->json(['mensaje' => 'Usuario registrado correctamente'], 200);
         } catch (Exception $ex) {
             $u = Usuario::find($id);
 
-            if($u) {
+            if ($u) {
                 $u->delete();
             }
 
-            return response()->json(['mensaje' => 'No se ha podido crear el usuario, error interno del servidor'], 500);
+            return response()->json(['mensaje' => 'No se ha podido crear el usuario, error interno del servidor. Mensaje de error: ' . $ex->getMessage()], 500);
         }
     }
 
@@ -107,7 +118,8 @@ class ControllerAdmin extends Controller
                 'ciudad',
                 'descripcion',
                 'foto',
-                'hijos'
+                'hijos',
+                'activo'
             )
             ->get()->first();
 
@@ -128,6 +140,10 @@ class ControllerAdmin extends Controller
 
             $usuario->gustosGenero = $gustos_genero;
             $usuario->preferencias = $preferencias;
+            //Cambio 01-03-2022: Incorporación de roles en la respuesta
+            $roles = RolUsuario::where('id_usuario', '=', $usuario->id)
+                ->get()->pluck('id_rol')->toArray();
+            $usuario->roles = $roles;
 
             return response()->json($usuario, 200);
         }
@@ -139,35 +155,38 @@ class ControllerAdmin extends Controller
      * @param String $id ID del usuario a actualizar
      * @return Response
      */
-    public function actualizarUsuario(Request $r) {
+    public function actualizarUsuario(Request $r)
+    {
 
         try {
             //Obtenemos y actualizamos el usuario
             Usuario::where('id', '=', $r->get('id'))
-            ->update([
-                'nombre' => $r->get('nombre'),
-                'apellidos' => $r->get('apellidos'),
-                'correo' => $r->get('correo'),
-                'id_genero' => $r->get('id_genero'),
-                'fecha_nacimiento' => $r->get('fecha_nacimiento'),
-                'ciudad' => $r->get('ciudad'),
-                'descripcion' => $r->get('descripcion'),
-                // 'foto' => $r->get('foto'),
-                'foto' => 'https://picsum.photos/350',
-                'hijos' => $r->get('hijos'),
-                'conectado' => 0,
-                'activo' => 0,
-                'tema' => 0
-            ]);
+                ->update([
+                    'nombre' => $r->get('nombre'),
+                    'apellidos' => $r->get('apellidos'),
+                    'correo' => $r->get('correo'),
+                    'id_genero' => $r->get('id_genero'),
+                    'fecha_nacimiento' => $r->get('fecha_nacimiento'),
+                    'ciudad' => $r->get('ciudad'),
+                    'descripcion' => $r->get('descripcion'),
+                    // 'foto' => $r->get('foto'),
+                    'foto' => 'https://picsum.photos/350',
+                    'hijos' => $r->get('hijos'),
+                    'conectado' => 0,
+                    'activo' => $r->get('activo'),
+                    'tema' => 0
+                ]);
 
 
 
             //Le asignamos la contraseña
             Pass::where('id_usuario', '=', $r->get('id'))
-            ->update([
-                'id_usuario' => $r->get('id'),
-                'pass' => md5($r->get('pass'))
-            ]);
+                ->update([
+                    'id_usuario' => $r->get('id'),
+                    'pass' => md5($r->get('pass'))
+                ]);
+
+
 
             //Eliminamos gustos y preferencias anteriores e insertamos los nuevas:
 
@@ -190,10 +209,19 @@ class ControllerAdmin extends Controller
                 ]);
             }
 
-            return response()->json(['mensaje' => 'Usuario actualizado correctamente'], 200);
+            RolUsuario::where('id_usuario', '=', $r->get('id'))->delete();
 
+            //Cambio 01-03-2022
+            foreach ($r->roles as $rol) {
+                RolUsuario::create([
+                    'id_usuario' => $r->get('id'),
+                    'id_rol' => $rol
+                ]);
+            }
+
+            return response()->json(['mensaje' => 'Usuario actualizado correctamente'], 200);
         } catch (Exception $ex) {
-            return response()->json(['mensaje' => 'No se ha podido actualizar el usuario, error interno del servidor'], 500);
+            return response()->json(['mensaje' => 'No se ha podido crear el usuario, error interno del servidor. Mensaje de error: ' . $ex->getMessage()], 500);
         }
     }
 

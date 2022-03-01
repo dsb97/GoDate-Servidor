@@ -13,4 +13,6 @@ class RolUsuario extends Model
         'id_usuario',
         'id_rol'
     ];
+    public $timestamps = false;
+
 }
