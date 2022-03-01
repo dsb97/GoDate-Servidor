@@ -45,7 +45,6 @@ class ControllerUser extends Controller
             ->take(100)
             ->get();
 
-
         if (count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
             || (count($uC->compatibilidadOrigen) != count($lista))) {
             $this->generarCompatibilidad($lista, Usuario::with('preferencias')->find($idUsuario));
@@ -69,6 +68,8 @@ class ControllerUser extends Controller
             ->select(['usuarios.id', 'usuarios.nombre', 'usuarios.apellidos', 'generos.descripcion as genero', 'usuarios.fecha_nacimiento', 'usuarios.ciudad', 'usuarios.descripcion', 'usuarios.foto', 'usuarios.hijos', 'usuarios.conectado', 'usuarios.activo', 'compatibilidad.porcentaje'])
             ->take(100)
             ->get();
+
+
         return response()->json($listaDevolver, 200);
     }
 
