@@ -67,8 +67,8 @@ class ControllerUser extends Controller
             ->orderBy('compatibilidad.porcentaje', 'desc')
             ->select(['usuarios.id', 'usuarios.nombre', 'usuarios.apellidos', 'generos.descripcion as genero', 'usuarios.fecha_nacimiento', 'usuarios.ciudad', 'usuarios.descripcion', 'usuarios.foto', 'usuarios.hijos', 'usuarios.conectado', 'usuarios.activo', 'compatibilidad.porcentaje'])
             ->take(100)
+            ->distinct()
             ->get();
-
 
         return response()->json($listaDevolver, 200);
     }

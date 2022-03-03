@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+
 Route::group(['prefix' => 'user'], function () {
     Route::get('listarAfinidades/{idUsuario}', [ControllerUser::class, 'listarAfinidades']);
     Route::get('perfilUsuario/{idUsuario}', [ControllerUser::class, 'perfilUsuario']);
@@ -31,6 +29,7 @@ Route::group(['prefix' => 'user'], function () {
 });
 
 Route::any('login', [ControllerGeneric::class, 'login']);
+Route::get('listaCiudades', [ControllerGeneric::class, 'obtenerCiudadesFormulario']);
 
 Route::group(['prefix' => 'admin'], function () {
     Route::post('altaUsuario', [ControllerAdmin::class, 'altaUsuario']);

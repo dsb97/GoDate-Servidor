@@ -180,11 +180,13 @@ class ControllerAdmin extends Controller
 
 
             //Le asignamos la contraseña
-            Pass::where('id_usuario', '=', $r->get('id'))
+            if ($r->get('pass') != '') {
+                Pass::where('id_usuario', '=', $r->get('id'))
                 ->update([
                     'id_usuario' => $r->get('id'),
                     'pass' => md5($r->get('pass'))
                 ]);
+            }
 
 
 

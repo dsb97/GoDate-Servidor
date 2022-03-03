@@ -24,24 +24,33 @@ class ControllerGeneric extends Controller
             $correo = $r->get('correo');
             $pass = $r->get('pass');
 
-            $u = Usuario::where('correo', $correo)->get()[0];
+            $u = Usuario::where([
+                ['correo', '=', $correo],
+                //['activo', '=', 1]
+            ])->get()[0];
             $p = Pass::where('id_usuario', $u->id)->get()[0];
             if ($u) {
-                if ($p->pass == md5($pass)) {
-                    $rr = Usuario::where('correo', $correo)->get(['id', 'correo', 'nombre', 'apellidos', 'foto'])[0];
-                    //Cambio 27-02-2022: Incorporación de roles en la respuesta
-                    $roles = RolUsuario::where('id_usuario', '=', $rr->id)
-                        ->get()->pluck('id_rol')->toArray();
-                    $rr->roles = $roles;
-                    return response()->json($rr, 200);
+                if ($u->activo == 1) {
+                    if ($p->pass == md5($pass)) {
+                        $rr = Usuario::where('correo', $correo)->get(['id', 'correo', 'nombre', 'apellidos', 'foto'])[0];
+                        //Cambio 27-02-2022: Incorporación de roles en la respuesta
+                        $roles = RolUsuario::where('id_usuario', '=', $rr->id)
+                            ->get()->pluck('id_rol')->toArray();
+                        $rr->roles = $roles;
+                        $u->conectado = 1;
+                        $u->save();
+                        return response()->json($rr, 200);
+                    } else {
+                        return response()->json(['mensaje' => 'Contraseña incorrecta'], 403);
+                    }
                 } else {
-                    return response()->json(['mensaje' => 'Contraseña incorrecta'], 403);
+                    return response()->json(['mensaje' => 'Este usuario aún no está activo.'], 403);
                 }
             } else {
                 return response()->json(['mensaje' => 'Este usuario no está registrado'], 404);
             }
         } catch (Exception $ex) {
-            return response()->json(['mensaje' => 'Error interno en el servidor, descripción del error: ' . $ex->getMessage()]);
+            return response()->json(['mensaje' => 'Este usuario no está registrado en el sistema'], 500);
         }
     }
 
@@ -114,7 +123,7 @@ class ControllerGeneric extends Controller
      */
     public function obtenerCiudadesFormulario()
     {
-        return response()->json(Ciudad::get('ciudad'), 200);
+        return response()->json(Ciudad::orderBy('ciudad', 'asc')->get()->pluck('ciudad'), 200);
     }
 
     /**
