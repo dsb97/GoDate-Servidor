@@ -11,4 +11,9 @@ class Pass extends Model
 
     protected $table = 'pass';
     protected $primaryKey = 'id_usuario';
+    protected $fillable = [
+        'id_usuario',
+        'pass'
+    ];
+
 }

@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+
 Route::group(['prefix' => 'user'], function () {
     Route::get('listarAfinidades/{idUsuario}', [ControllerUser::class, 'listarAfinidades']);
     Route::get('perfilUsuario/{idUsuario}', [ControllerUser::class, 'perfilUsuario']);
@@ -31,10 +29,16 @@ Route::group(['prefix' => 'user'], function () {
 });
 
 Route::any('login', [ControllerGeneric::class, 'login']);
+Route::get('listaCiudades', [ControllerGeneric::class, 'obtenerCiudadesFormulario']);
+Route::any('subirFoto', [ControllerGeneric::class, 'subirFoto']);
+Route::any('images/{file}', [ControllerGeneric::class, 'images']);
 
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('listarUsuarios', [ControllerAdmin::class, 'listarUsuarios']);
     Route::post('altaUsuario', [ControllerAdmin::class, 'altaUsuario']);
-    Route::put('togleActivado', [ControllerAdmin::class, 'togleActivado']);
-    Route::delete('borrarUsuario', [ControllerAdmin::class, 'borrarUsuario']);
+    Route::get('listarUsuarios', [ControllerAdmin::class, 'listarUsuarios']);
+    Route::get('detalleUsuario/{id}', [ControllerAdmin::class, 'detalleUsuario']);
+    Route::post('actualizarUsuario', [ControllerAdmin::class, 'actualizarUsuario']);
+    Route::delete('borrarUsuario/{id}', [ControllerAdmin::class, 'borrarUsuario']);
+
+    Route::put('togleActivado/{id}', [ControllerAdmin::class, 'togleActivado']);
 });

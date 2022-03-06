@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Compatibilidad;
 use App\Models\Dislike;
 use App\Models\Genero;
+use App\Models\GustosGenero;
 use App\Models\Like;
+use App\Models\Pass;
 use App\Models\Preferencia;
+use App\Models\PrefUsuarios;
 use App\Models\Usuario;
+use Exception;
 use Illuminate\Http\Request;
 
 class ControllerUser extends Controller
@@ -41,28 +45,40 @@ class ControllerUser extends Controller
             ->take(100)
             ->get();
 
-
-
-
-
-        if (count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
-            || (count($uC->compatibilidadOrigen) != count($lista))) {
+        if (
+            count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
+            || (count($uC->compatibilidadOrigen) != count($lista))
+        ) {
             $this->generarCompatibilidad($lista, Usuario::with('preferencias')->find($idUsuario));
         }
 
 
         $idsCompatibilidades = Usuario::with('compatibilidadOrigen')->find($idUsuario)->compatibilidadOrigen->pluck('id_usuario_d')->toArray();
 
+        $gustos_genero = GustosGenero::where('id_usuario', '=', $uC->id)->get()->pluck('id_genero')->toArray();
+
         $listaDevolver = Usuario::join('compatibilidad', 'usuarios.id', '=', 'compatibilidad.id_usuario_d')
             ->join('generos', 'generos.id', '=', 'usuarios.id_genero')
-            ->where('compatibilidad.id_usuario_o', $idUsuario)
+            ->join('gustos_genero', 'gustos_genero.id_usuario', '=', 'usuarios.id')
+            ->where([
+                ['compatibilidad.id_usuario_o', $idUsuario],
+                //Añadido filtro de edad al listar los usuarios:
+                //Si se cambian las preferencias, se ve el resultado en tiempo real.
+                //04-03-2022
+                ['fecha_nacimiento', '>', $edadMin],
+                ['fecha_nacimiento', '<', $edadMax]
+            ])
             ->whereIn('usuarios.id', $idsCompatibilidades)
+            //Añadida compatibilidad con género 27-02-2022
+            ->whereIn('usuarios.id_genero', $gustos_genero)
             ->whereNotIn('usuarios.id', $uC->likesDados->pluck('id_usuario_d')->toArray())
             ->whereNotIn('usuarios.id', $uC->dislikesDados->pluck('id_usuario_d')->toArray())
             ->orderBy('compatibilidad.porcentaje', 'desc')
             ->select(['usuarios.id', 'usuarios.nombre', 'usuarios.apellidos', 'generos.descripcion as genero', 'usuarios.fecha_nacimiento', 'usuarios.ciudad', 'usuarios.descripcion', 'usuarios.foto', 'usuarios.hijos', 'usuarios.conectado', 'usuarios.activo', 'compatibilidad.porcentaje'])
             ->take(100)
+            ->distinct()
             ->get();
+
         return response()->json($listaDevolver, 200);
     }
 
@@ -71,8 +87,9 @@ class ControllerUser extends Controller
      * para compararla con las edades mínimas y máximas que el usuario
      * indique en sus preferencias
      */
-    private function getAnio($y) {
-        return date("Y") - intval($y.'') . '-01-01';
+    private function getAnio($y)
+    {
+        return date("Y") - intval($y . '') . '-01-01';
     }
     /**
      * Genera un porcentaje de compatibilidad para cada uno de los usuarios de la lista dada
@@ -86,8 +103,10 @@ class ControllerUser extends Controller
             $suma = 0;
             $countPrefVal = 0;
             foreach ($usuario->preferencias as $preferencia) {
-                if (!str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'edad')
-                || !str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'relac')) {
+                if (
+                    !str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'edad')
+                    || !str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'relac')
+                ) {
                     $maximo = max($preferencia->intensidad, $yo->preferencias->where('id_preferencia', $preferencia->id_preferencia)->first()->intensidad);
                     $minimo = min($preferencia->intensidad, $yo->preferencias->where('id_preferencia', $preferencia->id_preferencia)->first()->intensidad);
                     $suma += $this->calcularPorcentajeCompatibilidad($maximo, $minimo);
@@ -143,7 +162,41 @@ class ControllerUser extends Controller
      */
     public function perfilUsuario($idUsuario)
     {
-        return response()->json(Usuario::with(['preferencias','pass'])->find($idUsuario), 200);
+        $usuario = Usuario::where('id', '=', $idUsuario)
+            ->select(
+                'id',
+                'nombre',
+                'apellidos',
+                'correo',
+                'id_genero',
+                'fecha_nacimiento',
+                'ciudad',
+                'descripcion',
+                'foto',
+                'hijos'
+            )
+            ->get()->first();
+
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'El usuario indicado no se ha encontrado'], 400);
+        } else {
+            $gustos_genero = GustosGenero::where('id_usuario', '=', $idUsuario)
+                ->get('id_genero')->pluck('id_genero');
+
+            $preferencias = PrefUsuarios::join('preferencias', 'preferencias_usuarios.id_preferencia', '=', 'preferencias.id')
+                ->where('preferencias_usuarios.id_usuario', '=', $idUsuario)
+                ->select(
+                    'preferencias.id',
+                    'preferencias.descripcion',
+                    'preferencias_usuarios.intensidad'
+                )
+                ->get();
+
+            $usuario->gustosGenero = $gustos_genero;
+            $usuario->preferencias = $preferencias;
+
+            return response()->json($usuario, 200);
+        }
     }
 
     /**
@@ -221,7 +274,8 @@ class ControllerUser extends Controller
      * Cierra la sesión de un usuario en concreto
      * @param integer $idUsuario
      */
-    public function cerrarSesion ($idUsuario) {
+    public function cerrarSesion($idUsuario)
+    {
         $u = Usuario::find($idUsuario);
         $u->conectado = 0;
         $u->save();
@@ -304,5 +358,68 @@ class ControllerUser extends Controller
             ->select('id', 'nombre', 'apellidos', 'fecha_nacimiento', 'foto', 'conectado')
             ->get();
         return response()->json($listaUsuarios, 200);
+    }
+
+    /**
+     * Actualiza el usuario indicado por parámetro
+     * @param String $id ID del usuario a actualizar
+     * @return Response
+     */
+    public function actualizarPerfil(Request $r)
+    {
+
+        try {
+            //Obtenemos y actualizamos el usuario
+            Usuario::where('id', '=', $r->get('id'))
+                ->update([
+                    'nombre' => $r->get('nombre'),
+                    'apellidos' => $r->get('apellidos'),
+                    'correo' => $r->get('correo'),
+                    'id_genero' => $r->get('id_genero'),
+                    'fecha_nacimiento' => $r->get('fecha_nacimiento'),
+                    'ciudad' => $r->get('ciudad'),
+                    'descripcion' => $r->get('descripcion'),
+                    // 'foto' => $r->get('foto'),
+                    'foto' => 'https://picsum.photos/350',
+                    'hijos' => $r->get('hijos'),
+                    'conectado' => 0,
+                    'activo' => 0,
+                    'tema' => 0
+                ]);
+
+
+
+            //Le asignamos la contraseña
+            Pass::where('id_usuario', '=', $r->get('id'))
+                ->update([
+                    'id_usuario' => $r->get('id'),
+                    'pass' => md5($r->get('pass'))
+                ]);
+
+            //Eliminamos gustos y preferencias anteriores e insertamos los nuevas:
+
+            GustosGenero::where('id_usuario', '=', $r->get('id'))->delete();
+
+            foreach ($r->gustosGenero as $val) {
+                GustosGenero::create([
+                    'id_usuario' => $r->get('id'),
+                    'id_genero' => $val
+                ]);
+            }
+
+            PrefUsuarios::where('id_usuario', '=', $r->get('id'))->delete();
+
+            foreach ($r->preferencias as $val) {
+                PrefUsuarios::create([
+                    'id_usuario' => $r->get('id'),
+                    'id_preferencia' => $val['id'],
+                    'intensidad' => $val['intensidad']
+                ]);
+            }
+
+            return response()->json(['mensaje' => 'Usuario actualizado correctamente'], 200);
+        } catch (Exception $ex) {
+            return response()->json(['mensaje' => 'No se ha podido actualizar el usuario, error interno del servidor'], 500);
+        }
     }
 }

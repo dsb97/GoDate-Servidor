@@ -8,7 +8,20 @@ use Illuminate\Database\Eloquent\Model;
 class Usuario extends Model
 {
     use HasFactory;
-    protected $fillable = ['nombre', 'apellidos', 'correo', 'pass', 'id_genero', 'fecha_nacimiento', 'ciudad', 'descripcion', 'foto', 'conectado', 'activo', 'tema'];
+    protected $fillable = [
+        'nombre',
+        'apellidos',
+        'correo',
+        'id_genero',
+        'fecha_nacimiento',
+        'ciudad',
+        'descripcion',
+        'foto',
+        'hijos',
+        'conectado',
+        'activo',
+        'tema'
+    ];
     public function pass()
     {
         return $this->hasOne(Pass::class, 'id_usuario', 'id');
