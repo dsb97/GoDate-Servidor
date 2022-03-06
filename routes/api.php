@@ -30,6 +30,8 @@ Route::group(['prefix' => 'user'], function () {
 
 Route::any('login', [ControllerGeneric::class, 'login']);
 Route::get('listaCiudades', [ControllerGeneric::class, 'obtenerCiudadesFormulario']);
+Route::any('subirFoto', [ControllerGeneric::class, 'subirFoto']);
+Route::any('images/{file}', [ControllerGeneric::class, 'images']);
 
 Route::group(['prefix' => 'admin'], function () {
     Route::post('altaUsuario', [ControllerAdmin::class, 'altaUsuario']);
@@ -38,5 +40,5 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('actualizarUsuario', [ControllerAdmin::class, 'actualizarUsuario']);
     Route::delete('borrarUsuario/{id}', [ControllerAdmin::class, 'borrarUsuario']);
 
-    Route::put('togleActivado', [ControllerAdmin::class, 'togleActivado']);
+    Route::put('togleActivado/{id}', [ControllerAdmin::class, 'togleActivado']);
 });

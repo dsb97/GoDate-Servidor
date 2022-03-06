@@ -133,4 +133,35 @@ class ControllerGeneric extends Controller
     {
         return response()->json(Preferencia::get(['id', 'descripcion']), 200);
     }
+
+    public function subirFoto(Request $r)
+    {
+        $folderPath = public_path() . DIRECTORY_SEPARATOR . 'imagenes/';
+
+        if (!file_exists($folderPath)) {
+            mkdir($folderPath, 0777, true);
+        }
+
+        $file_tmp = $_FILES['file']['tmp_name'];
+        $file_ext = explode('/', $_FILES['file']['type'] . '')[1];
+        $file = uniqid() . '.' . $file_ext;
+        $filePath = $folderPath . $file;
+        move_uploaded_file($file_tmp, $filePath);
+
+        $respuesta = $r->getSchemeAndHttpHost() . '/api/images/' . $file;
+        error_log($respuesta);
+        return response()->json(['mensaje' => $respuesta], 200);
+    }
+
+    /**
+     * Obtiene las imagenes en formato file
+     * Esto me ha llevado 5 horas de un día que podría haber dedicado a otra cosa,
+     * pero bueno, pasas que cosan
+     */
+    public function images($file) {
+        $folderPath = public_path() . DIRECTORY_SEPARATOR . 'imagenes/';
+        $filew = $folderPath . $file;
+        return response()->file($filew);
+
+    }
 }

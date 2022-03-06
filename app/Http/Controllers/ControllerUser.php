@@ -45,8 +45,10 @@ class ControllerUser extends Controller
             ->take(100)
             ->get();
 
-        if (count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
-            || (count($uC->compatibilidadOrigen) != count($lista))) {
+        if (
+            count($uC->likesDados) + count($uC->dislikesDados) == count($uC->compatibilidadOrigen)
+            || (count($uC->compatibilidadOrigen) != count($lista))
+        ) {
             $this->generarCompatibilidad($lista, Usuario::with('preferencias')->find($idUsuario));
         }
 
@@ -58,7 +60,14 @@ class ControllerUser extends Controller
         $listaDevolver = Usuario::join('compatibilidad', 'usuarios.id', '=', 'compatibilidad.id_usuario_d')
             ->join('generos', 'generos.id', '=', 'usuarios.id_genero')
             ->join('gustos_genero', 'gustos_genero.id_usuario', '=', 'usuarios.id')
-            ->where('compatibilidad.id_usuario_o', $idUsuario)
+            ->where([
+                ['compatibilidad.id_usuario_o', $idUsuario],
+                //Añadido filtro de edad al listar los usuarios:
+                //Si se cambian las preferencias, se ve el resultado en tiempo real.
+                //04-03-2022
+                ['fecha_nacimiento', '>', $edadMin],
+                ['fecha_nacimiento', '<', $edadMax]
+            ])
             ->whereIn('usuarios.id', $idsCompatibilidades)
             //Añadida compatibilidad con género 27-02-2022
             ->whereIn('usuarios.id_genero', $gustos_genero)
@@ -78,8 +87,9 @@ class ControllerUser extends Controller
      * para compararla con las edades mínimas y máximas que el usuario
      * indique en sus preferencias
      */
-    private function getAnio($y) {
-        return date("Y") - intval($y.'') . '-01-01';
+    private function getAnio($y)
+    {
+        return date("Y") - intval($y . '') . '-01-01';
     }
     /**
      * Genera un porcentaje de compatibilidad para cada uno de los usuarios de la lista dada
@@ -93,8 +103,10 @@ class ControllerUser extends Controller
             $suma = 0;
             $countPrefVal = 0;
             foreach ($usuario->preferencias as $preferencia) {
-                if (!str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'edad')
-                || !str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'relac')) {
+                if (
+                    !str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'edad')
+                    || !str_contains(strtolower(Preferencia::where('id', 1)->get()->first()->descripcion), 'relac')
+                ) {
                     $maximo = max($preferencia->intensidad, $yo->preferencias->where('id_preferencia', $preferencia->id_preferencia)->first()->intensidad);
                     $minimo = min($preferencia->intensidad, $yo->preferencias->where('id_preferencia', $preferencia->id_preferencia)->first()->intensidad);
                     $suma += $this->calcularPorcentajeCompatibilidad($maximo, $minimo);
@@ -262,7 +274,8 @@ class ControllerUser extends Controller
      * Cierra la sesión de un usuario en concreto
      * @param integer $idUsuario
      */
-    public function cerrarSesion ($idUsuario) {
+    public function cerrarSesion($idUsuario)
+    {
         $u = Usuario::find($idUsuario);
         $u->conectado = 0;
         $u->save();
@@ -352,35 +365,36 @@ class ControllerUser extends Controller
      * @param String $id ID del usuario a actualizar
      * @return Response
      */
-    public function actualizarPerfil(Request $r) {
+    public function actualizarPerfil(Request $r)
+    {
 
         try {
             //Obtenemos y actualizamos el usuario
             Usuario::where('id', '=', $r->get('id'))
-            ->update([
-                'nombre' => $r->get('nombre'),
-                'apellidos' => $r->get('apellidos'),
-                'correo' => $r->get('correo'),
-                'id_genero' => $r->get('id_genero'),
-                'fecha_nacimiento' => $r->get('fecha_nacimiento'),
-                'ciudad' => $r->get('ciudad'),
-                'descripcion' => $r->get('descripcion'),
-                // 'foto' => $r->get('foto'),
-                'foto' => 'https://picsum.photos/350',
-                'hijos' => $r->get('hijos'),
-                'conectado' => 0,
-                'activo' => 0,
-                'tema' => 0
-            ]);
+                ->update([
+                    'nombre' => $r->get('nombre'),
+                    'apellidos' => $r->get('apellidos'),
+                    'correo' => $r->get('correo'),
+                    'id_genero' => $r->get('id_genero'),
+                    'fecha_nacimiento' => $r->get('fecha_nacimiento'),
+                    'ciudad' => $r->get('ciudad'),
+                    'descripcion' => $r->get('descripcion'),
+                    // 'foto' => $r->get('foto'),
+                    'foto' => 'https://picsum.photos/350',
+                    'hijos' => $r->get('hijos'),
+                    'conectado' => 0,
+                    'activo' => 0,
+                    'tema' => 0
+                ]);
 
 
 
             //Le asignamos la contraseña
             Pass::where('id_usuario', '=', $r->get('id'))
-            ->update([
-                'id_usuario' => $r->get('id'),
-                'pass' => md5($r->get('pass'))
-            ]);
+                ->update([
+                    'id_usuario' => $r->get('id'),
+                    'pass' => md5($r->get('pass'))
+                ]);
 
             //Eliminamos gustos y preferencias anteriores e insertamos los nuevas:
 
@@ -404,7 +418,6 @@ class ControllerUser extends Controller
             }
 
             return response()->json(['mensaje' => 'Usuario actualizado correctamente'], 200);
-
         } catch (Exception $ex) {
             return response()->json(['mensaje' => 'No se ha podido actualizar el usuario, error interno del servidor'], 500);
         }

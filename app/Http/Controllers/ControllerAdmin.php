@@ -34,8 +34,7 @@ class ControllerAdmin extends Controller
                 'fecha_nacimiento' => $r->get('fecha_nacimiento'),
                 'ciudad' => $r->get('ciudad'),
                 'descripcion' => $r->get('descripcion'),
-                // 'foto' => $r->get('foto'),
-                'foto' => 'https://picsum.photos/350',
+                'foto' => $r->get('foto'),
                 'hijos' => $r->get('hijos'),
                 'conectado' => 0,
                 'activo' => $r->get('activo'),
@@ -157,6 +156,7 @@ class ControllerAdmin extends Controller
      */
     public function actualizarUsuario(Request $r)
     {
+        error_log($r->get('conectado'));
 
         try {
             //Obtenemos y actualizamos el usuario
@@ -169,10 +169,8 @@ class ControllerAdmin extends Controller
                     'fecha_nacimiento' => $r->get('fecha_nacimiento'),
                     'ciudad' => $r->get('ciudad'),
                     'descripcion' => $r->get('descripcion'),
-                    // 'foto' => $r->get('foto'),
-                    'foto' => 'https://picsum.photos/350',
+                    'foto' => $r->get('foto'),
                     'hijos' => $r->get('hijos'),
-                    'conectado' => 0,
                     'activo' => $r->get('activo'),
                     'tema' => 0
                 ]);
@@ -246,14 +244,15 @@ class ControllerAdmin extends Controller
      * Activa o desactiva al usuario enviado por la petición
      * @param Request $r
      */
-    public function togleActivado(Request $r)
+    public function togleActivado($id)
     {
-        $usuario = Usuario::find($r);
+        $usuario = Usuario::find($id);
         if (!$usuario) {
             return response()->json(['error' => 'No se encuentra el usuario'], 404);
         }
+        $ac = $usuario->activo;
         $usuario->activo = ($usuario->activo == 1 ? 0 : 1);
         $usuario->save();
-        return response()->json(['mensaje' => 'OK'], 200);
+        return response()->json(['mensaje' => 'El usuario se ha ' . ($ac == 1 ? 'des' : '') . 'activado correctamente '], 200);
     }
 }
